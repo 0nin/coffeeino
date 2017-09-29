@@ -166,29 +166,6 @@ void update_key(int key) {
 }
 
 
-//int get_key(unsigned int input){
-//  int k;
-//  for (k = 0; k < NUM_KEYS; k++){
-//    if (input < adc_key_val[k]){
-//      return k;
-//    }
-//  }
-//  if (k >= NUM_KEYS)
-//    k = -1;     
-//  return k;
-//}
-
-//int get_key(unsigned int input){
-//  for (unsigned int i = 0; i < POST_COUNT; i++) {
-//    if (digitalRead(buttons[i])) {
-//      return i;
-//    }
-//  }
-//
-//  return -1;
-//}
-
-
 unsigned long get_time(unsigned long t1, unsigned long t0) {
   if (t1 >= t0) {
     return (t1 - t0) ;
