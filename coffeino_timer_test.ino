@@ -22,7 +22,7 @@ const unsigned long t_reset = 5*1000; //ms
 const unsigned long t_false = 1*1000;
 const unsigned long range = -1;
 //constants for real buttons
-const int buttons[] = {0, 1, 2, 3};
+const int buttons[] = {2, 3, 4, 5};
 
 
 //coffee vars
@@ -166,17 +166,17 @@ void update_key(int key) {
 }
 
 
-//int get_key(unsigned int input){
-//  int k;
-//  for (k = 0; k < NUM_KEYS; k++){
-//    if (input < adc_key_val[k]){
-//      return k;
-//    }
-//  }
-//  if (k >= NUM_KEYS)
-//    k = -1;     
-//  return k;
-//}
+int get_key(unsigned int input){
+  int k;
+  for (k = 0; k < NUM_KEYS; k++){
+    if (input < adc_key_val[k]){
+      return k;
+    }
+  }
+  if (k >= NUM_KEYS)
+    k = -1;     
+  return k;
+}
 
 //int get_key(unsigned int input){
 //  for (unsigned int i = 0; i < POST_COUNT; i++) {
@@ -207,7 +207,6 @@ void setup() {
   post[0] = EEPROMReadlong(adress);
   post[1] = EEPROMReadlong(adress+4);
   post[2] = EEPROMReadlong(adress+8);
-  
   for (unsigned int i = 0; i < POST_COUNT; i++) {
     if (post[i] > COUNT_MAX) {
       post[i] = COUNT_MAX;
@@ -216,8 +215,8 @@ void setup() {
   }
 
   for (unsigned int i = 0; i < POST_COUNT; i++) {
-    pinMode(buttons[i], INPUT_PULLUP);           // set pin to input
-//    digitalWrite(buttons[i], HIGH);       // turn on pullup resistors
+    pinMode(buttons[i], INPUT);           // set pin to input
+    digitalWrite(buttons[i], HIGH);       // turn on pullup resistors
   }
     
   lcd.begin(16, 2);
@@ -232,83 +231,79 @@ void setup() {
 
 
 void loop() {
-  for (unsigned int i = 0; i < POST_COUNT; i++) {
-    if (digitalRead(buttons[i]) == HIGH) {
-      key = i;
-    
-      delay(50);
-  
-      if (key > -1 && key < 3) {
-        if (pressed[key] == false) {
-          start_key(key);
-          pressed[key] = true;
-          if (false_start[key] == true) {
-            update_post(key);
-            false_start[key] = false;
-          }
-        }
-        else {
-          update_key(key);
-          if (get_time(t1[key], t0[key]) >= t_false) {
-            false_start[key] = true;
-          }
-          if (!counted[key]) {
-            if (get_time(t1[key], t0[key]) >= p_delay) {
-              update_post(key);
-              counted[key] = true;
-              false_start[key] = false;
-              start_key(key);
-            }
-          }
-          else {
-            if (get_time(t1[key], t0[key])/1000 >= p_op) {
-              update_post(key);
-              counted[key] = true;
-              start_key(key);
-            }
-          }
-          show[key] = get_time(t1[key], t0[key]);
-          update_lcd(key);
-        }
-      }
+  adc_key_in = analogRead(0); 
+  key = get_key(adc_key_in);
 
+//  for (unsigned int i = 0; i < POST_COUNT; i++) {
+//    if (digitalRead(buttons[i]) == 1) {
+    
+  delay(50);
   
-      else if (key == 3) {
-        if (pressed[key] == false) {
-          start_key(key);
-          pressed[key] = true;
-        }
-        else {
-          update_key(key);
-          if (get_time(t1[key], t0[key]) >= t_reset) {
-              EEPROMWritelong(adress, 0);
-              EEPROMWritelong(adress+4, 0);
-              EEPROMWritelong(adress+8, 0);
-              for (unsigned int i = 0; i < POST_COUNT; i++) {
-                 post[i] = 0;
-                 show[i] = post[i];
-                 update_lcd(i);
-              }
-              stop_key[key];
-              pressed[key] = false;
-            }
-          }
+  if (key > -1 && key < 3) {
+    if (pressed[key] == false) {
+      start_key(key);
+      pressed[key] = true;
+      if (false_start[key] == true) {
+        update_post(key);
+        false_start[key] = false;
       }
     }
-
-  
-      else {
-          if (pressed[key] == true) {
-            pressed[key] = false;
-            stop_key(key);
-            show[key] = 0;
-            counted[key] = false;
-            show[key] = post[key];
-            clear_lcd();
-          }
+    else {
+      update_key(key);
+      if (get_time(t1[key], t0[key]) >= t_false) {
+        false_start[key] = true;
       }
-
+      if (!counted[key]) {
+        if (get_time(t1[key], t0[key]) >= p_delay) {
+          update_post(key);
+          counted[key] = true;
+          false_start[key] = false;
+          start_key(key);
+        }
+      }
+      else {
+        if (get_time(t1[key], t0[key])/1000 >= p_op) {
+          update_post(key);
+          counted[key] = true;
+          start_key(key);
+        }
+      }
+      show[key] = get_time(t1[key], t0[key]);
+      update_lcd(key);
+    }
   }
-  
-} //void loop(void)
+  else if (key == 3) {
+    if (pressed[key] == false) {
+      start_key(key);
+      pressed[key] = true;
+    }
+    else {
+      update_key(key);
+      if (get_time(t1[key], t0[key]) >= t_reset) {
+          EEPROMWritelong(adress, 0);
+          EEPROMWritelong(adress+4, 0);
+          EEPROMWritelong(adress+8, 0);
+          for (unsigned int i = 0; i < POST_COUNT; i++) {
+             post[i] = 0;
+             show[i] = post[i];
+             update_lcd(i);
+          }
+          stop_key[key];
+          pressed[key] = false;
+        }
+      }
+  }
+  else if (key == -1) {
+    for (unsigned int i = 0; i< POST_COUNT; i++) {
+      if (pressed[i] == true) {
+        pressed[i] = false;
+        stop_key(i);
+        show[i] = 0;
+        counted[i] = false;
+        show[i] = post[i];
+        clear_lcd();
+      }
+    }
+  }
+}
 
