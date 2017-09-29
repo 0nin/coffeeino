@@ -233,7 +233,7 @@ void setup() {
 
 void loop() {
   for (unsigned int i = 0; i < POST_COUNT; i++) {
-    if (digitalRead(buttons[i]) == HIGH) {
+    if (digitalRead(buttons[i]) == LOW) {
       key = i;
     
       delay(50);
@@ -273,27 +273,27 @@ void loop() {
       }
 
   
-      else if (key == 3) {
-        if (pressed[key] == false) {
-          start_key(key);
-          pressed[key] = true;
-        }
-        else {
-          update_key(key);
-          if (get_time(t1[key], t0[key]) >= t_reset) {
-              EEPROMWritelong(adress, 0);
-              EEPROMWritelong(adress+4, 0);
-              EEPROMWritelong(adress+8, 0);
-              for (unsigned int i = 0; i < POST_COUNT; i++) {
-                 post[i] = 0;
-                 show[i] = post[i];
-                 update_lcd(i);
-              }
-              stop_key[key];
-              pressed[key] = false;
-            }
-          }
-      }
+//      else if (key == 3) {
+//        if (pressed[key] == false) {
+//          start_key(key);
+//          pressed[key] = true;
+//        }
+//        else {
+//          update_key(key);
+//          if (get_time(t1[key], t0[key]) >= t_reset) {
+//              EEPROMWritelong(adress, 0);
+//              EEPROMWritelong(adress+4, 0);
+//              EEPROMWritelong(adress+8, 0);
+//              for (unsigned int i = 0; i < POST_COUNT; i++) {
+//                 post[i] = 0;
+//                 show[i] = post[i];
+//                 update_lcd(i);
+//              }
+//              stop_key[key];
+//              pressed[key] = false;
+//            }
+//          }
+//      }
     }
 
   
