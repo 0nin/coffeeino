@@ -19,7 +19,7 @@ const unsigned long COUNT_MAX = 999999;
 const unsigned long p_delay = 7*1000; //ms
 const unsigned long p_op = 40; //s
 const unsigned long t_reset = 5*1000; //ms
-const unsigned long t_false = 1*1000;
+const unsigned long t_false = 1*2000;
 const unsigned long range = -1;
 //constants for real buttons
 const int buttons[] = {2, 3, 4, 5};
