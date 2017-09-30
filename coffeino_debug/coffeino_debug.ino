@@ -225,11 +225,13 @@ void loop() {
           }
         }
         else {
-          update_key(key);
-          if (get_time(t1[key], t0[key]) >= t_false) {
-            false_start[key] = true;
-          }
+
           if (!counted[key]) {
+           update_key(key);
+            if (get_time(t1[key], t0[key]) >= t_false) {
+              false_start[key] = true;
+            }
+            
             if (get_time(t1[key], t0[key]) >= p_delay) {
               update_post(key);
               counted[key] = true;

@@ -19,7 +19,7 @@ const unsigned long COUNT_MAX = 999999;
 const unsigned long p_delay = 7*1000; //ms
 const unsigned long p_op = 40; //s
 const unsigned long t_reset = 5*1000; //ms
-const unsigned long t_false = 1*1000;
+const unsigned long t_false = 1*2000;
 const unsigned long range = -1;
 //constants for real buttons
 const int buttons[] = {0, 1, 2, 3};
@@ -216,7 +216,8 @@ void loop() {
   for (unsigned int i = 0; i < POST_COUNT; i++) {
     key = i;
     if (digitalRead(key) == LOW) {
-      
+
+      //post count key
       if (key > -1 && key < 3) {
         if (pressed[key] == false) {
           start_key(key);
@@ -228,10 +229,11 @@ void loop() {
         }
         else {
           update_key(key);
-          if (get_time(t1[key], t0[key]) >= t_false) {
-            false_start[key] = true;
-          }
           if (!counted[key]) {
+            if (get_time(t1[key], t0[key]) >= t_false) {
+              false_start[key] = true;
+            }
+            
             if (get_time(t1[key], t0[key]) >= p_delay) {
               update_post(key);
               counted[key] = true;
@@ -246,12 +248,12 @@ void loop() {
               start_key(key);
             }
           }
-          show[key] = get_time(t1[key], t0[key]);
+          //show[key] = get_time(t1[key], t0[key]);
           //update_lcd(key);
         }
       }
 
-  
+      //reset key
       else if (key == 3) {
         if (pressed[key] == false) {
           start_key(key);
@@ -275,12 +277,10 @@ void loop() {
       }
     }
 
-  
       else if (digitalRead(buttons[i]) == HIGH)  {
           if (pressed[key] == true) {
             pressed[key] = false;
             stop_key(key);
-            show[key] = 0;
             counted[key] = false;
             show[key] = post[key];
             clear_lcd();
