@@ -21,8 +21,6 @@ const unsigned long p_op = 40; //s
 const unsigned long t_reset = 5*1000; //ms
 const unsigned long t_false = 1*2000;
 const unsigned long range = -1;
-//constants for real buttons
-const int buttons[] = {2, 3, 4, 5};
 
 
 //coffee vars
@@ -178,15 +176,6 @@ int get_key(unsigned int input){
   return k;
 }
 
-//int get_key(unsigned int input){
-//  for (unsigned int i = 0; i < POST_COUNT; i++) {
-//    if (digitalRead(buttons[i])) {
-//      return i;
-//    }
-//  }
-//
-//  return -1;
-//}
 
 
 unsigned long get_time(unsigned long t1, unsigned long t0) {
@@ -212,11 +201,6 @@ void setup() {
       post[i] = COUNT_MAX;
     }
     show[i] = post[i];
-  }
-
-  for (unsigned int i = 0; i < POST_COUNT; i++) {
-    pinMode(buttons[i], INPUT);           // set pin to input
-    digitalWrite(buttons[i], HIGH);       // turn on pullup resistors
   }
     
   lcd.begin(16, 2);
