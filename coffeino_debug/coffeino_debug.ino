@@ -17,7 +17,7 @@ const unsigned long adress = 0;
 const unsigned int POST_COUNT = 4;
 const unsigned long COUNT_MAX = 999999;
 const unsigned long p_delay = 7*1000; //ms
-const unsigned long p_op = 40; //s
+const unsigned long p_op = 60; //s 40->60
 const unsigned long t_reset = 5*1000; //ms
 const unsigned long t_false = 1*2000;
 const unsigned long range = -1;
@@ -30,6 +30,7 @@ unsigned long t0[POST_COUNT];
 unsigned long t1[POST_COUNT];
 bool pressed[POST_COUNT];
 bool counted[POST_COUNT];
+bool blocked[POST_COUNT];
 bool false_start[POST_COUNT];
 
 
@@ -196,6 +197,7 @@ void setup() {
   post[0] = EEPROMReadlong(adress);
   post[1] = EEPROMReadlong(adress+4);
   post[2] = EEPROMReadlong(adress+8);
+
   for (unsigned int i = 0; i < POST_COUNT; i++) {
     if (post[i] > COUNT_MAX) {
       post[i] = COUNT_MAX;
@@ -230,6 +232,7 @@ void loop() {
       if (false_start[key] == true) {
         update_post(key);
         false_start[key] = false;
+        blocked[key] = true;
       }
     }
     else {
@@ -240,9 +243,12 @@ void loop() {
           false_start[key] = true;
         }
         if (get_time(t1[key], t0[key]) >= p_delay) {
-          update_post(key);
+          if (blocked[key]  == false) {
+            update_post(key);
+          }
           counted[key] = true;
           false_start[key] = false;
+          blocked[key] = false;
           start_key(key);
         }
       }
